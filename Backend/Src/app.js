@@ -1,13 +1,14 @@
 import express from "express";
-import userRouter from "./Routes/user.routes";
+import userRouter from "./Routes/user.routes.js";
+import cookieParser from "cookie-parser";
 const app = express();
 
-// Allow cross‑origin requests (from other websites)
-app.use(cors({
-    origin: process.env.CORS_ORIGIN,   // Only allow requests from this website (set in .env file)
-    credentials: true,                 // Allow cookies and login info to be sent
-    methods: ["GET", "POST", "PUT", "DELETE"], // Only allow these request types
-}));
+// // Allow cross‑origin requests (from other websites)
+// app.use(cors({
+//     origin: process.env.CORS_ORIGIN,   // Only allow requests from this website (set in .env file)
+//     credentials: true,                 // Allow cookies and login info to be sent
+//     methods: ["GET", "POST", "PUT", "DELETE"], // Only allow these request types
+// }));
 
 // Read cookies from incoming requests
 app.use(cookieParser());
