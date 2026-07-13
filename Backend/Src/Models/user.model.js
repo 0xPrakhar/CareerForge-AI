@@ -32,10 +32,9 @@ const userSchema = new mongoose.Schema(
       url: {
         type: String,
         default: "",
-      },
+      }
       
     },
-
     password: {
       type: String,
       required: [true, "Password is required"],

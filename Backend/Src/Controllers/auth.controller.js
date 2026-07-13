@@ -57,3 +57,32 @@ const createdUser = await User.findById(createNewUser._id).select("-password -re
   );
 
 });
+
+
+//login
+
+const loginUser=asyncHandler(async()=>{
+const {username,email,password}=req.body;
+ //normalizeduser
+      const normalizedUsername = username.toLowerCase();
+      const normalizedemail = email.toLowerCase();
+      if(!normalizedUsername&&!normalizedemail){
+        throw new ApiError(401, "Incorrect username or email");
+      }
+       if(!password){
+        throw new ApiError(401, "Password is invaild or worng");
+      }
+       const user = await User.findOne({ $or: [{ email }, { username }] });
+  if (!user) {
+    throw new ApiError(404, "User not found with this email or username");
+  }
+
+const user = await db.collection('users').findOne({ email: req.body.email });
+
+     if (user.password === req.body.password) {
+    console.log("Authentication successful!");
+} else {
+    console.log("Incorrect password.");
+}
+
+})
