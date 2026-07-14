@@ -11,6 +11,7 @@ import User from '../Models/User.model.js';
 // // Utility function to upload files to Cloudinary and return their URLs
 
 import { ApiResponse } from '../Utils/ApiResponse.utils.js';
+import { uploadToCloudinary } from '../Utils/Cloudinary.utils.js';
 
 // generate the accesss token or refresh token
 const generateAccessAndRefreshTokens = async (userId) => {
@@ -30,68 +31,98 @@ const generateAccessAndRefreshTokens = async (userId) => {
 };
 
 // Register the user
-const registerUser=asyncHandler(async(req,res)=>{
-    const {username,fullName,email,password}=req.body;
-    
-    //check all fields are there or not
-    if([username,fullName,email,password].some(field => !field?.trim())){
-     throw new ApiError(400, "All fields are required");
-    };
-    //normalizeduser
-      const normalizedUsername = username.toLowerCase();
-      const normalizedemail = email.toLowerCase();
-      
-      // Check if a user already exists with the same username OR email
-  const existingUser = await User.findOne({
-    $or: [ { username: normalizedUsername },
-        { email: normalizedemail }]
-  });
+const registerUser = asyncHandler(async (req, res) => {
+    const { username, fullName, email, password } = req.body;
 
-  if (existingUser) {
-    throw new ApiError(409, "User already exists with this username or email");
-  }
+    // Validate required fields
+    if (
+        [username, fullName, email, password].some(
+            (field) => !field?.trim()
+        )
+    ) {
+        throw new ApiError(400, "All fields are required");
+    }
 
-    const createNewUser= await User.create({
-        username:normalizedUsername,
-        fullName,
-        email:normalizedemail,
-         avatar,
-         password
-    })
-//check the use is created or not 
-const createdUser = await User.findById(createNewUser._id).select("-password -refreshToken")
- if (!createdUser) {
-    throw new ApiError(500, "Failed to create user");
-  }
+    // Normalize input
+    const normalizedUsername = username.trim().toLowerCase();
+    const normalizedEmail = email.trim().toLowerCase();
 
-  // Send success response back to frontend
-  return res.status(201).json(
-    new ApiResponse(
-    201,
-    createdUser,
-    "User registered successfully"
-)
-  );
+    // Check for existing user
+    const existingUser = await User.findOne({
+        $or: [
+            { username: normalizedUsername },
+            { email: normalizedEmail }
+        ]
+    });
 
+    if (existingUser) {
+        throw new ApiError(
+            409,
+            "User already exists with this username or email"
+        );
+    }
+
+    // Default avatar (replace with your own Cloudinary URL)
+    let avatarUrl =
+        "https://res.cloudinary.com/dw1rssczb/image/upload/v1784008638/user_abfhtv.png";
+
+    // Upload avatar if provided
+    if (req.file?.path) {
+        const uploadResult = await uploadToCloudinary(req.file.path);
+
+        if (!uploadResult) {
+            throw new ApiError(500, "Failed to upload avatar");
+        }
+
+        // Adjust this line if your utility returns a different property
+        avatarUrl = uploadResult.secure_url || uploadResult.url;
+    }
+
+    // Create user
+    const user = await User.create({
+        username: normalizedUsername,
+        fullName: fullName.trim(),
+        email: normalizedEmail,
+        password, // Will be hashed by your Mongoose pre-save middleware
+        avatar: {
+            url: avatarUrl,
+        },
+    });
+
+    // Get user without sensitive fields
+    const createdUser = await User.findById(user._id).select(
+        "-password -refreshToken"
+    );
+
+    if (!createdUser) {
+        throw new ApiError(500, "Failed to create user");
+    }
+
+    return res.status(201).json(
+        new ApiResponse(
+            201,
+            createdUser,
+            "User registered successfully"
+        )
+    );
 });
 
 
 //login
 
 const loginUser = asyncHandler(async (req, res) => {
-  console.log("Request Body:", req.body); // Add this line for debugging
-  // 1. Get user details from the request body
   const { username, email, password } = req.body;
 
-  // 2. Validate input
+  // Validate input
   if (!username && !email) {
-    throw new ApiError(400, "Username or email is required");
+    throw new ApiError(400, "Username or Email is required");
   }
+
   if (!password) {
     throw new ApiError(400, "Password is required");
   }
 
-  // 3. Find the user in the database by username or email (case-insensitive)
+  // Find user using username OR email
   const user = await User.findOne({
     $or: [
       { username: username?.toLowerCase() },
@@ -100,19 +131,48 @@ const loginUser = asyncHandler(async (req, res) => {
   });
 
   if (!user) {
-    throw new ApiError(404, "User not found with this email or username");
+    throw new ApiError(404, "User not found");
   }
 
-  // 4. Check if the password matches (simple comparison, no hashing)
-  if (user.password !== password) {
-    throw new ApiError(401, "Invalid user credentials");
+  // Verify password
+  const isPasswordValid = await user.comparePassword(password);
+
+  if (!isPasswordValid) {
+    throw new ApiError(401, "Invalid username/email or password");
   }
 
-  // 5. Get the logged-in user's data, but hide the password
-  const loggedInUser = await User.findById(user._id).select("-password");
+  // Generate tokens
+  const { accessToken, refreshToken } =
+    await generateAccessAndRefreshTokens(user._id);
 
-  // 6. Send a successful response
-  return res.status(200).json(new ApiResponse(200, loggedInUser, "User logged in successfully"));
+  // Get user without sensitive fields
+  const loggedInUser = await User.findById(user._id).select(
+    "-password -refreshToken"
+  );
+
+  // Cookie options
+  const options = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  };
+
+  // Send response
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+      new ApiResponse(
+        200,
+        {
+          user: loggedInUser,
+          accessToken,
+          refreshToken,
+        },
+        "User logged in successfully"
+      )
+    );
 });
 
 export {

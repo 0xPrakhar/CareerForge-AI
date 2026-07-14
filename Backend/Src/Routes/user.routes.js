@@ -6,7 +6,7 @@ const userRouter=Router();
 
 
 //register the register route
-userRouter.route("/register").post(registerUser)
+userRouter.route("/register").upload.single("avatar").post(registerUser)
 
 //login
 userRouter.route("/login").post(loginUser);
