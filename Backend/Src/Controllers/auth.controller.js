@@ -4,7 +4,7 @@ import { asyncHandler } from '../Utils/asyncHandler.utils.js';
 import ApiError from '../Utils/ApiError.utils.js';
 // Custom error class to standardize API error responses
 
-import {User} from '../Models/User.model.js';
+import User from '../Models/User.model.js';
 // Mongoose User model for interacting with the database
 
 // import { uploadToCloudinary } from '../Utils/cloudinay.js';
@@ -12,6 +12,22 @@ import {User} from '../Models/User.model.js';
 
 import { ApiResponse } from '../Utils/ApiResponse.utils.js';
 
+// generate the accesss token or refresh token
+const generateAccessAndRefreshTokens = async (userId) => {
+  // Implementation for generating access and refresh tokens
+  try {
+    const user = await User.findById(userId);
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
+    user.refreshToken = refreshToken;
+    await user.save({ validateBeforeSave: false })
+    return { accessToken, refreshToken };
+
+
+  } catch (error) {
+    throw new ApiError(500, "Failed to generate  Refresh and Access tokens");
+  }
+};
 
 // Register the user
 const registerUser=asyncHandler(async(req,res)=>{
