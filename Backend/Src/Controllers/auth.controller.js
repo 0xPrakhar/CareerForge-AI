@@ -175,6 +175,66 @@ const loginUser = asyncHandler(async (req, res) => {
     );
 });
 
+const logoutUser = asyncHandler(async (req, res) => {
+  // 1. Get the logged-in user's ID
+  // Hint: It should come from your auth middleware (req.user)
+  // 2. Remove the refresh token from the database
+  // Hint: Update the user document and unset/clear the refreshToken field
+  await User.findByIdAndUpdate(
+    req.user._id,
+    {$unset:{refreshToken:1}},
+    {new:true}
+  )
+  // 3. Define cookie options
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
+  // 4. Clear the access token cookie
+
+
+  // 5. Clear the refresh token cookie
+   
+
+  // 6. Send a success response
+  return res
+    // .clearCookie(...)
+    .clearCookie("accessToken",options)
+    // .clearCookie(...)
+     .clearCookie("refreshToken",options)
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        {},
+        "User logged out successfully"
+      )
+    );
+});
+
+
+const refreshAccessToken = asyncHandler(async (req, res) => {
+  // Step 1: Get refresh token from cookies or body
+
+  // Step 2: Check if refresh token exists
+
+  // Step 3: Verify JWT
+
+  // Step 4: Find the user
+
+  // Step 5: Compare stored refresh token with incoming refresh token
+
+  // Step 6: Generate new access token and refresh token
+
+  // Step 7: Save the new refresh token in the database
+
+  // Step 8: Set new cookies
+
+  // Step 9: Return success response
+});
+
+
 export {
   registerUser,
   loginUser,
