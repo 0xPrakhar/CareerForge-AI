@@ -216,27 +216,60 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
   // Step 1: Get refresh token from cookies or body
-
-  // Step 2: Check if refresh token exists
-
+   const {refreshToken} = req.cookies;
+   
+   // Step 2: Check if refresh token exists
+    if (!refreshToken) {
+        return res.status(401).json({ message: 'Refresh token missing' });
+    }
   // Step 3: Verify JWT
+  const decode = jwt.verify(
+    refreshToken,
+    process.env.REFRESH_TOKEN_SECRET
+)
 
   // Step 4: Find the user
+  const user = await User.findById(decode._id)
+  if (!user) {
+   throw new ApiError(404, "User not found")
+}
 
   // Step 5: Compare stored refresh token with incoming refresh token
+ if (refreshToken !== user.refreshToken) {
+    throw new ApiError(401, "Invalid refresh token")
+}
 
   // Step 6: Generate new access token and refresh token
+  const{accessToken,refreshToken: newRefreshToken }=await generateAccessAndRefreshTokens(user._id)
 
   // Step 7: Save the new refresh token in the database
-
+   user.refreshToken = newRefreshToken;
+    await user.save()
+ const options = {
+    httpOnly: true,
+    secure: true,
+  };
   // Step 8: Set new cookies
-
   // Step 9: Return success response
+   return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", newRefreshToken, options)
+    .json(
+      new ApiResponse(
+        200,
+        {},
+        "refreshToken or AccessToken is updated"
+      )
+    );
+
 });
 
 
 export {
   registerUser,
   loginUser,
+  logoutUser,
+  refreshAccessToken
  
 };

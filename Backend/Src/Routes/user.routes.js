@@ -1,14 +1,32 @@
 import { Router } from "express";
-import { registerUser, loginUser } from  "../Controllers/auth.controller.js";
+import { registerUser, loginUser ,logoutUser,refreshAccessToken} from  "../Controllers/auth.controller.js";
 
 const userRouter=Router();
 
 
 
-//register the register route
-userRouter.route("/register").upload.single("avatar").post(registerUser)
+// Register User
+userRouter
+  .route("/register")
+  .post(upload.single("avatar"), registerUser);
 
-//login
-userRouter.route("/login").post(loginUser);
+
+// Login User
+userRouter
+  .route("/login")
+  .post(loginUser);
+
+
+// Logout User
+// Later add verifyJWT here
+userRouter
+  .route("/logout")
+  .post(logoutUser);
+
+
+// Refresh Access Token
+userRouter
+  .route("/refresh-token")
+  .post(refreshAccessToken);
 
 export default userRouter;
