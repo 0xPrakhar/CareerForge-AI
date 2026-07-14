@@ -12,6 +12,7 @@ import User from '../Models/User.model.js';
 
 import { ApiResponse } from '../Utils/ApiResponse.utils.js';
 import { uploadToCloudinary } from '../Utils/Cloudinary.utils.js';
+import jwt from "jsonwebtoken"
 
 // generate the accesss token or refresh token
 const generateAccessAndRefreshTokens = async (userId) => {
@@ -54,6 +55,8 @@ const registerUser = asyncHandler(async (req, res) => {
             { email: normalizedEmail }
         ]
     });
+    console.log("Fetched user:", user);
+
 
     if (existingUser) {
         throw new ApiError(
@@ -100,9 +103,9 @@ const registerUser = asyncHandler(async (req, res) => {
 
     return res.status(201).json(
         new ApiResponse(
-            201,
+            "User registered successfully",
             createdUser,
-            "User registered successfully"
+            201
         )
     );
 });
@@ -112,6 +115,8 @@ const registerUser = asyncHandler(async (req, res) => {
 
 const loginUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
+
+console.log(req.body)
 
   // Validate input
   if (!username && !email) {
@@ -133,14 +138,13 @@ const loginUser = asyncHandler(async (req, res) => {
   if (!user) {
     throw new ApiError(404, "User not found");
   }
-
-  // Verify password
+console.log("Incoming password:", password);
+console.log("User password field:", user.password);
+  // 🔐 Verify password using model method (comparePassword)
   const isPasswordValid = await user.comparePassword(password);
-
   if (!isPasswordValid) {
-    throw new ApiError(401, "Invalid username/email or password");
+    throw new ApiError(401, "Invalid password");
   }
-
   // Generate tokens
   const { accessToken, refreshToken } =
     await generateAccessAndRefreshTokens(user._id);
@@ -164,13 +168,13 @@ const loginUser = asyncHandler(async (req, res) => {
     .cookie("refreshToken", refreshToken, options)
     .json(
       new ApiResponse(
-        200,
+        "User logged in successfully",
         {
           user: loggedInUser,
           accessToken,
           refreshToken,
-        },
-        "User logged in successfully"
+        },        
+        200
       )
     );
 });
@@ -185,6 +189,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     {$unset:{refreshToken:1}},
     {new:true}
   )
+  console.log(_id)
   // 3. Define cookie options
   const options = {
     httpOnly: true,

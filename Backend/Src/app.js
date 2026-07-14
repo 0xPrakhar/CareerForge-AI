@@ -14,6 +14,7 @@ const app = express();
 app.use(cookieParser());
 
 
+
 // Read JSON data from requests (like API calls)
 // Limit: only accept up to 10kb of data
 app.use(express.json({ limit: "10kb" }));

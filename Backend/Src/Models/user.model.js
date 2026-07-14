@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is required"],
       minlength: 8,
-      select: false, // Don't return password by default
+     // select: false, // Don't return password by default
     },
 
     isEmailVerified: {
@@ -74,6 +74,7 @@ userSchema.pre("save", async function () {
 // Compare password method
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
+  console.log(candidatePassword)
 };
 
 // Generate access token

@@ -1,8 +1,8 @@
 // Import Cloudinary's v2 API and rename it as 'cloudinary'
 import { v2 as cloudinary } from 'cloudinary';
 
-// Import Node.js 'fs' module to work with the file system
-import fs from 'fs';
+// Import the promises-based version of the 'fs' module
+import fs from 'fs/promises';
 
 
 cloudinary.config({
@@ -14,10 +14,12 @@ cloudinary.config({
 
 
 const uploadToCloudinary = async (filePath, folder) => {
+    // Safety check: ensure a file path is provided
+    if (!filePath) {
+        throw new Error("File path is required for uploading to Cloudinary");
+    }
+
     try {
-        // Safety check: ensure a file path is provided
-        if (!filePath) return console.error("File path is required for uploading to Cloudinary"); 
-        
         // Upload the file to Cloudinary
         // 'folder' specifies the folder in your Cloudinary account
         // 'resource_type: auto' lets Cloudinary detect file type (image, video, etc.)
@@ -25,24 +27,20 @@ const uploadToCloudinary = async (filePath, folder) => {
             folder: folder,
             resource_type: "auto"
         });
-
-        // Log success message with the uploaded file's URL
-        //console.log("File uploaded to Cloudinary successfully", response.url);
-        // After successful upload, delete the local file to free up space
-        fs.unlinkSync(filePath);
         return response;
-        // Return the full response object (contains metadata like public_id, secure_url, etc.)
-        
-
     } catch (error) {
-        // If upload fails, delete the local file to avoid clutter
-        fs.unlinkSync(filePath);
-
         // Log the error for debugging
         console.error("Error uploading file to Cloudinary:", error);
-
         // Rethrow the error so calling code can handle it
         throw error;
+    } finally {
+        // After upload (successful or not), delete the local file to free up space
+        try {
+            await fs.unlink(filePath);
+        } catch (unlinkError) {
+            // Log if the file cleanup fails, but don't let it hide the original error
+            console.error("Failed to delete local file:", unlinkError);
+        }
     }
 }
 

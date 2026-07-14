@@ -1,14 +1,15 @@
 import { Router } from "express";
 import { registerUser, loginUser ,logoutUser,refreshAccessToken} from  "../Controllers/auth.controller.js";
-
+import { upload } from '../Middleware/multer.middleware.js'
 const userRouter=Router();
 
 
 
 // Register User
-userRouter
-  .route("/register")
-  .post(upload.single("avatar"), registerUser);
+userRouter.route("/register").post(
+  upload.single("avatar"), 
+  registerUser
+);
 
 
 // Login User
