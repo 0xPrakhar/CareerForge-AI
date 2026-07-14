@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { registerUser, loginUser ,logoutUser,refreshAccessToken} from  "../Controllers/auth.controller.js";
 import { upload } from '../Middleware/multer.middleware.js'
+import checkJwt from "../Middleware/auth.middleware.js";
 const userRouter=Router();
 
 
@@ -22,7 +23,7 @@ userRouter
 // Later add verifyJWT here
 userRouter
   .route("/logout")
-  .post(logoutUser);
+  .post(checkJwt, logoutUser);
 
 
 // Refresh Access Token
