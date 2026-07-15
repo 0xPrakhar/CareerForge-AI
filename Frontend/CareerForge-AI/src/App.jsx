@@ -1,15 +1,12 @@
+import { RouterProvider } from "react-router-dom";   // ✅ use react-router-dom
+import { router } from "./routes/AppRouter.jsx";
 
-
-import './App.css'
+import "./App.css";
 
 function App() {
- 
-
   return (
-   <h1 class="text-3xl font-bold underline">
-    Hello world!
-  </h1>
-  )
+    <RouterProvider router={router} />
+  );
 }
 
-export default App
+export default App;
