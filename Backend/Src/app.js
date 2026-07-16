@@ -1,6 +1,7 @@
 import express from "express";
 import userRouter from "./Routes/user.routes.js";
 import cookieParser from "cookie-parser";
+import resumeRouter from "./Routes/resume.routes.js";
 const app = express();
 
 // // Allow cross‑origin requests (from other websites)
@@ -27,5 +28,7 @@ app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 //register all the userRoutes 
 
 app.use('/api/v1/users',userRouter);
+//register all the resumeRoutes
+app.use("api/v1/resume",resumeRouter)
 
 export default app;
