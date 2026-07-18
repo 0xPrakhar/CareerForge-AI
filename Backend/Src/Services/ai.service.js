@@ -1,6 +1,6 @@
 // services/ai.service.js
 
-import ApiError from "../utils/ApiError.js";
+import ApiError from "../Utils/ApiError.utils.js";
 import openRouterClient from "../config/openRouter.js";
 
 export const analyzeResume = async ({ resumeText }) => {

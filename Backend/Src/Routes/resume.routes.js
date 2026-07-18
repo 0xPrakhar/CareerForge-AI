@@ -1,22 +1,21 @@
 import { Router } from "express";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { upload } from "../middlewares/multer.middleware.js";
-import upload from '../Middleware/multer.middleware.js'
+import { upload } from "../middleware/multer.middleware.js";
+import checkJwt from '../Middleware/auth.middleware.js'
+
 
 import {
   uploadResume,
   getAllResumes,
   getResumeById,
-  updateResume,
   deleteResume,
-} from "../controllers/resume.controller.js";
+} from "../Controllers/resume.controller.js";
 
 const router = Router();
 
 // Upload Resume
 router.post(
   "/upload",
-  verifyJWT,
+  checkJwt,
   upload.single("resume"),
   uploadResume
 );
@@ -24,28 +23,23 @@ router.post(
 // Get all resumes of logged-in user
 router.get(
   "/",
-  verifyJWT,
+ checkJwt,
   getAllResumes
 );
 
 // Get single resume
 router.get(
   "/:resumeId",
-  verifyJWT,
+  checkJwt,
   getResumeById
 );
 
-// Update resume
-router.patch(
-  "/:resumeId",
-  verifyJWT,
-  updateResume
-);
+
 
 // Delete resume
 router.delete(
   "/:resumeId",
-  verifyJWT,
+checkJwt,
   deleteResume
 );
 

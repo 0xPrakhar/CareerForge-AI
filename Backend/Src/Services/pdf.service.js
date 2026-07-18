@@ -1,8 +1,10 @@
+import { createRequire } from 'module'; 
+const require = createRequire(import.meta.url);
+const pdfParse = require('pdf-parse');
 import { readFile } from "fs/promises";
-import pdfParse from "pdf-parse";
 import ApiError from "../Utils/ApiError.utils.js";
 
-export const extractText = async (filePath) => {
+ const extractText = async (filePath) => {
   try {
     // Read PDF file into a buffer
     const dataBuffer = await readFile(filePath);
@@ -25,3 +27,5 @@ export const extractText = async (filePath) => {
     );
   }
 };
+
+export{extractText}

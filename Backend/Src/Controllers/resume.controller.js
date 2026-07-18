@@ -4,7 +4,7 @@ import { ApiResponse } from '../Utils/ApiResponse.utils.js';
 import { uploadToCloudinary } from '../Utils/Cloudinary.utils.js';
 import Resume from '../Models/Resume.model.js'; // Ensure this model is imported
 // Assuming these are your utility/service functions
-import { extractText } from '../Utils/pdfExtractor.utils.js'; 
+import { extractText } from '../Services/pdf.service.js'; 
 import { analyzeResume } from '../Services/ai.service.js';
 import { request } from 'http';
 
