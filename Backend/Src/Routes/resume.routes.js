@@ -1,15 +1,52 @@
 import { Router } from "express";
-import multer from "multer";
-import { uploadResume } from "../Controllers/resume.controller.js";
-import { upload } from "../Middleware/multer.middleware.js";
-const resumeRouter=Router();
+import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { upload } from "../middlewares/multer.middleware.js";
+import upload from '../Middleware/multer.middleware.js'
 
+import {
+  uploadResume,
+  getAllResumes,
+  getResumeById,
+  updateResume,
+  deleteResume,
+} from "../controllers/resume.controller.js";
 
+const router = Router();
 
-
-resumeRouter.route("/upload").post(
+// Upload Resume
+router.post(
+  "/upload",
+  verifyJWT,
   upload.single("resume"),
   uploadResume
 );
 
-export default resumeRouter;
+// Get all resumes of logged-in user
+router.get(
+  "/",
+  verifyJWT,
+  getAllResumes
+);
+
+// Get single resume
+router.get(
+  "/:resumeId",
+  verifyJWT,
+  getResumeById
+);
+
+// Update resume
+router.patch(
+  "/:resumeId",
+  verifyJWT,
+  updateResume
+);
+
+// Delete resume
+router.delete(
+  "/:resumeId",
+  verifyJWT,
+  deleteResume
+);
+
+export default router;

@@ -19,7 +19,7 @@ try {
     messages: [
       {
         role: "user",
-        content: "Say hello in one sentence.",
+        content: "can u play a normal vido on my terminal  ",
       },
     ],
   });
