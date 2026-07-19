@@ -1,20 +1,22 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
-export default function RootLayout() {
+const RootLayout = () => {
   return (
-    <div>
-      <header>
-        <nav>
-          <Link to="/">Home</Link> | 
-          <Link to="/login">Login</Link> | 
-          <Link to="/register">Register</Link>
-        </nav>
-      </header>
+    <div className="min-h-screen bg-black text-white flex flex-col">
+      {/* Navigation */}
+      <Navbar />
 
-      <main>
-        {/* This is where nested routes (Home, AuthLayout, etc.) will render */}
+      {/* Page Content */}
+      <main className="flex-1">
         <Outlet />
       </main>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
-}
+};
+
+export default RootLayout;
