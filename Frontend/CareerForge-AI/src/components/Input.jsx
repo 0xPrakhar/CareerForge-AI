@@ -1,87 +1,73 @@
-import React, { useId } from 'react'
+import React, { useId } from "react";
 
-// forwardRef allows parent components to access this input directly.
-// Example: inputRef.current.focus()
 const Input = React.forwardRef(function Input(
-
-  // Destructuring props
- {
-  label,
-  type = "text",
-  className = "",
-  placeholder,
-  leftElement,
-  rightElement,
-  ...props
-},
-
-  // Ref coming from parent component
+  {
+    label,
+    type = "text",
+    className = "",
+    placeholder,
+    leftElement,
+    rightElement,
+    ...props
+  },
   ref
-
 ) {
-
-  // Creates a unique ID for connecting label and input
-  const id = useId()
+  const id = useId();
 
   return (
-
-    // Takes full available width
     <div className="w-full">
-
-      {/* Show label only if label exists */}
       {label && (
         <label
-          htmlFor={id} // Connects label to input
+          htmlFor={id}
           className="block mb-2 text-sm text-gray-300"
         >
           {label}
         </label>
       )}
-      
+
       <div className="relative">
-  <input
-    id={id}
-    type={type}
-    placeholder={placeholder}
-    ref={ref}
-    {...props}
-    className={`
-      w-full
-      px-4
-      py-3
-      pr-16
-      rounded-xl
-      bg-zinc-900
-      border border-zinc-700
-      text-white
-      placeholder:text-gray-500
-      outline-none
-      transition-all
-      duration-300
-      focus:border-red-500
-      focus:ring-2
-      focus:ring-red-500/30
-      ${className}
-    `}
-  />
+        {leftElement && (
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            {leftElement}
+          </div>
+        )}
 
-  {rightElement && (
-    <div className="absolute right-4 top-1/2 -translate-y-1/2">
-      {rightElement}
-    </div>
-  )}
-  
-  {leftElement && (
-    <div className="absolute left-4 top-1/2 -translate-y-1/2">
-      {leftElement}
-    </div>
-  )}
-</div>
-    </div>
-  )
-})
+        {rightElement && (
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+            {rightElement}
+          </div>
+        )}
 
-// Helps React DevTools show "Input" instead of "ForwardRef"
-Input.displayName = 'Input'
+        <input
+          id={id}
+          type={type}
+          placeholder={placeholder}
+          ref={ref}
+          {...props}
+          className={`
+            w-full
+            h-11
+            rounded-xl
+            bg-zinc-900
+            border border-zinc-700
+            text-white
+            placeholder:text-gray-500
+            outline-none
+            transition-all duration-300
+            focus:bg-zinc-900       
+            focus:border-fuchsia-500 
+            focus:ring-2 focus:ring-fuchsia-500/30
+            px-3
+            ${leftElement ? "pl-10" : ""}
+            ${rightElement ? "pr-10" : ""}
+            ${className}
+          `}
+        />
+      </div>
+    </div>
+  );
+});
 
-export default Input
+Input.displayName = "Input";
+
+export default Input;

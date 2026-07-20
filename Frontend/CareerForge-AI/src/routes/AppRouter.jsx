@@ -5,7 +5,7 @@ import {
 } from "react-router-dom";
 
 import RootLayout from "../layouts/RootLayout.jsx";
-import AuthLayout from "../layouts/AuthLayout.jsx";
+
 // import DashboardLayout from "../components/DashboardLayout.jsx";
 
 import Home from "../features/home/pages/Home.jsx";
@@ -26,10 +26,9 @@ export const router = createBrowserRouter(
       </Route>
 
       {/* Authentication */}
-      <Route element={<AuthLayout />}>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-      </Route>
+      {/* Authentication */}
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
 
       {/* Dashboard */}
       {/* <Route element={<DashboardLayout />}>

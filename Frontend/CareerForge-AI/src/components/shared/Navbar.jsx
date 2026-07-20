@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { Sparkles, ArrowRight } from "lucide-react";
+import {  ArrowRight } from "lucide-react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
+import { Logo } from "./Logo";
 
 // --- Constants ---
 const navItems = [
@@ -18,7 +19,7 @@ const navLinkClasses =
 const ctaButtonClasses =
   "inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20";
 
-const logoClasses = "flex items-center gap-2.5";
+
 
 // --- Framer Motion Variants ---
 const mobileMenuVariants = {
@@ -69,22 +70,7 @@ const Navbar = () => {
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between rounded-2xl border border-white/10 bg-zinc-950/65 px-6 shadow-lg backdrop-blur-lg">
         {/* Logo */}
-        <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
-          <Link to="/" className={logoClasses}>
-            <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-violet-600 to-fuchsia-600">
-              <Sparkles className="h-4 w-4 text-white" />
-            </span>
-            <span className="text-lg font-semibold tracking-tight text-white">
-              CareerForge{" "}
-              <span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-                AI
-              </span>
-            </span>
-            <span className="ml-1 rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-zinc-400">
-              Beta
-            </span>
-          </Link>
-        </motion.div>
+       <Logo/>
 
         {/* Desktop Navigation */}
         <LayoutGroup id="desktop-nav">
@@ -129,7 +115,7 @@ const Navbar = () => {
           <motion.div whileHover={{ y: -2, transition: { duration: 0.2 } }}>
             <Link
               to="/register"
-              className={`${ctaButtonClasses} gap-2 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white shadow-[0_0_20px_rgba(168,85,247,0.25)] hover:shadow-[0_0_35px_rgba(168,85,247,0.45)]`}
+              className={`${ctaButtonClasses} gap-2 bg-linear-to-r from-violet-600 to-fuchsia-600 text-white shadow-[0_0_20px_rgba(168,85,247,0.25)] hover:shadow-[0_0_35px_rgba(168,85,247,0.45)]`}
             >
               Start Free
               <ArrowRight size={16} />
@@ -189,7 +175,7 @@ const Navbar = () => {
               <Link
                 to="/register"
                 onClick={handleMobileLinkClick}
-                className={`${ctaButtonClasses} gap-2 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-center text-white`}
+                className={`${ctaButtonClasses} gap-2 bg-linear-to-r from-violet-600 to-fuchsia-600 text-center text-white`}
               >
                 Start Free
                 <ArrowRight size={16} />

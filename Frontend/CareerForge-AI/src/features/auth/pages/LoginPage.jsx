@@ -14,6 +14,7 @@ export default function LoginPage() {
       footerLinkHref="/register"
     >
       <div className="flex flex-col gap-6">
+        {/* Email Input */}
         <Input
           label="Email"
           type="email"
@@ -21,6 +22,7 @@ export default function LoginPage() {
           leftElement={<Mail className="size-4 text-slate-400" />}
         />
 
+        {/* Password Input + Forgot Link */}
         <div className="flex flex-col gap-2">
           <Input
             label="Password"
@@ -30,15 +32,37 @@ export default function LoginPage() {
           />
           <Link
             to="/forgot-password"
-            className="font-medium text-cyan-300 text-sm leading-5 self-end"
+            className="font-medium text-fuchsia-300 text-sm leading-5 self-end"
           >
             Forgot Password?
           </Link>
         </div>
 
-        <Button className="bg-[linear-gradient(135deg,#6366F1_0%,#06B6D4_100%)] shadow-[0_12px_30px_rgba(99,102,241,0.28)] transition-all font-semibold rounded-xl text-white border-indigo-400/30 border border-solid w-full h-11">
-          <LogIn className="size-4 mr-2" />
-          Login
+        {/* Login Button */}
+        <Button className="bg-linear-to-br from-violet-600 to-fuchsia-600 shadow-[0_12px_30px_rgba(124,58,237,0.28)] transition-all font-semibold rounded-xl text-white border-violet-400/30 border border-solid w-full h-11 flex items-center justify-center gap-2">
+  <LogIn className="w-4 h-4" />
+  <span>Login</span>
+</Button>
+
+
+        {/* Divider */}
+        <div className="flex items-center gap-2 text-gray-500 text-sm">
+          <span className="grow border-t border-gray-700" />
+          <span>or</span>
+          <span className="grow border-t border-gray-700" />
+        </div>
+
+        {/* Google Button (Coming Soon) */}
+        <Button
+          disabled
+          className="bg-white text-gray-700 font-semibold rounded-xl w-full h-11 border border-gray-300 flex items-center justify-center gap-2 cursor-not-allowed"
+        >
+          <img
+            src="https://www.svgrepo.com/show/475656/google-color.svg"
+            alt="Google logo"
+            className="w-5 h-5"
+          />
+          Continue with Google (Coming Soon)
         </Button>
       </div>
     </AuthLayout>
